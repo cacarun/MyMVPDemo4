@@ -17,6 +17,7 @@ public abstract class ProgressObserver<T> extends BaseSubscriber<T> {
 
     @Override
     public void onStart() {
+        Log.e("onStart", Thread.currentThread().getName());
         dialog.show();
         super.onStart();
     }
@@ -24,11 +25,14 @@ public abstract class ProgressObserver<T> extends BaseSubscriber<T> {
     @Override
     protected void onError(APIException ex) {
         String displayMessage = ex.getDisplayMessage();
+        Log.e("onError", "Thread: " + Thread.currentThread().getName() + "  error msg: " + displayMessage);
+
         dialog.dismiss();
     }
 
     @Override
     public void onCompleted() {
+        Log.e("onCompleted", Thread.currentThread().getName());
         dialog.dismiss();
     }
 

@@ -36,8 +36,6 @@ public class ReposListActivity extends BaseActivity implements ReposContract.Vie
 
     ReposPresenter mReposPresenter;
 
-    ProgressObserver<User> progressObserver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +50,6 @@ public class ReposListActivity extends BaseActivity implements ReposContract.Vie
     protected void onDestroy() {
         super.onDestroy();
 
-        // cancel
-        if (!progressObserver.isUnsubscribed()) {
-            progressObserver.unsubscribe();
-        }
         mReposPresenter.detachView();
     }
 
@@ -74,15 +68,11 @@ public class ReposListActivity extends BaseActivity implements ReposContract.Vie
 
     private void loadData() {
 
-        progressObserver = new ProgressObserver<User>(this) {
-            @Override
-            public void onNext(User user) {
-                if (user != null) {
-                    mTVClickMe.setText("user name: " + user.getLoginName());
-                }
-            }
-        };
-        mReposPresenter.login(progressObserver);
+        mReposPresenter.login();
     }
 
+    @Override
+    public void fillData(User user) {
+        mTVClickMe.setText("user name: " + user.getLoginName());
+    }
 }

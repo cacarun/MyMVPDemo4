@@ -16,11 +16,11 @@ public interface ReposContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void login(ProgressObserver progressObserver);
+        void login();
     }
 
     interface View extends BaseView {
-        // void fillData(String data);
+        void fillData(User user);
     }
 
 }

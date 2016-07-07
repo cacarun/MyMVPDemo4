@@ -1,5 +1,6 @@
 package com.android.mvp2.ui.repos;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -8,6 +9,7 @@ import com.android.mvp2.data.model.User;
 import com.android.mvp2.http.HttpClient;
 import com.android.mvp2.http.HttpResultErrorFunc;
 import com.android.mvp2.http.HttpResultFunc;
+import com.android.mvp2.http.SchedulersCompat;
 import com.android.mvp2.subscriber.ProgressObserver;
 import com.android.mvp2.util.DeviceUtil;
 import com.android.mvp2.util.MD5Util;
@@ -30,8 +32,22 @@ public class ReposPresenter implements ReposContract.Presenter {
 
     private Context context;
 
+    private ProgressObserver<User> progressObserver;
+
     public ReposPresenter(Context context) {
         this.context = context;
+
+        progressObserver = new ProgressObserver<User>(context) {
+            @Override
+            public void onNext(User user) {
+
+                Log.e("onNext", Thread.currentThread().getName());
+
+                if (user != null) {
+                    mView.fillData(user);
+                }
+            }
+        };
     }
 
 
@@ -43,10 +59,15 @@ public class ReposPresenter implements ReposContract.Presenter {
     @Override
     public void detachView() {
         mView = null;
+
+        // cancel
+        if (!progressObserver.isUnsubscribed()) {
+            progressObserver.unsubscribe();
+        }
     }
 
     @Override
-    public void login(ProgressObserver progressObserver) {
+    public void login() {
 
         Map<String, String> map = new HashMap<>();
         map.put("account" , "wuyu");
@@ -70,10 +91,9 @@ public class ReposPresenter implements ReposContract.Presenter {
             })
             .onErrorResumeNext(new HttpResultErrorFunc<User>()) // 异常转换器
             .subscribeOn(Schedulers.io())
-            .unsubscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            //.compose(SchedulersCompat.<User>applyIoSchedulers())
             .subscribe(progressObserver);
-
     }
 
 }
