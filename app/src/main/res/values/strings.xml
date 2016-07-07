@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Dagger2</string>
+
+    <string name="main_mock_data">自定义数据(测试)</string>
+    <string name="main_goto_activity">跳转列表</string>
+    <string name="api_github">https://api.github.com</string>
+</resources>
